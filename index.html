@@ -1,1 +1,63 @@
-{"filters":["inventory?space","/news","/parameters"],"intercept":"public-ubiservices.ubi.com"}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="application/json; charset=utf-8">
+<title>ubiservices</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #9cdcfe; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; white-space: pre; padding: 8px; }
+  .key { color: #9cdcfe; }
+  .str { color: #ce9178; }
+  .num { color: #b5cea8; }
+  .null { color: #569cd6; }
+  #output { line-height: 1.5; }
+</style>
+</head>
+<body>
+<div id="output">Loading...</div>
+<script>
+(async function() {
+  const path = window.location.pathname + window.location.search;
+  const filters = ['inventory', '/news', '/parameters'];
+  const matched = filters.some(f => path.includes(f));
+
+  const out = document.getElementById('output');
+
+  if (!matched) {
+    out.textContent = JSON.stringify({"filters":["inventory?space","/news","/parameters"],"intercept":"public-ubiservices.ubi.com"}, null, 2);
+    return;
+  }
+
+  try {
+    const resp = await fetch('/items.json');
+    const data = await resp.json();
+
+    // Format as pretty JSON with syntax highlighting
+    function syntaxHighlight(json) {
+      json = JSON.stringify(json, null, 2);
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+        let cls = 'num';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'key';
+          } else {
+            cls = 'str';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'num';
+        } else if (/null/.test(match)) {
+          cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    out.innerHTML = syntaxHighlight(data);
+  } catch(e) {
+    out.textContent = 'Error loading items.json: ' + e.message;
+  }
+})();
+</script>
+</body>
+</html>
