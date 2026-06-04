@@ -1,5 +1,4 @@
-{
-  "items": [
+[
     {
       "itemId": "4549faff-ebbf-ecab-3ecd-aff006210fee",
       "quantity": 1,
@@ -156177,5 +156176,4 @@
       "lastModified": "2026-03-03T14:22:50.003Z",
       "expirationDetails": null
     }
-  ]
-}
+]
